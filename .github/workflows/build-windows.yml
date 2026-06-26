@@ -18,11 +18,16 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pillow tkinterdnd2 pyinstaller
+          pip install pillow numpy tkinterdnd2 pyinstaller
 
       - name: Build Windows EXE
         run: |
-          pyinstaller --onefile --noconsole --name WatermarkRemover watermark_remover.py
+          pyinstaller --onefile --noconsole --collect-all numpy --collect-all PIL --hidden-import=numpy --hidden-import=PIL --name WatermarkRemover watermark_remover.py
+
+      - name: Verify build
+        run: |
+          ls -la dist/
+          python -c "import os; print('EXE size:', os.path.getsize('dist/WatermarkRemover.exe'), 'bytes')"
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
